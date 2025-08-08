@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+.env
+dpe_dump_new.sql
+parcelles_new_dump.sql

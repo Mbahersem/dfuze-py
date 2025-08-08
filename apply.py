@@ -3,7 +3,7 @@ import json
 import subprocess
 import datetime
 from typing import List
-from job import DPEResume, get_elements_from_api, parse_time, pick_tuesday, handle_cmd_outputs, get_ip
+from job import DPEResume, get_elements_from_api, parse_time, pick_tuesday, handle_cmd_outputs, get_ip, FIRST_URL
 from generate import generate_json, generate_sql_dump, generate_docker_file, generate_kubernetes_file
 
 
@@ -27,6 +27,8 @@ def main():
     least = tuesday - datetime.timedelta(days=8)  # A week before this Tuesday
     max_date = tuesday - datetime.timedelta(days=15)  # Two weeks before this Tuesday
     date_from_last_value = parse_time(json_response["results"][-1]["date_derniere_modification_dpe"])
+
+    print(f"Least : {least}, then max : {max_date} and last date : {date_from_last_value}")
 
     if not from_date or not to_date:
         while least <= date_from_last_value <= max_date:

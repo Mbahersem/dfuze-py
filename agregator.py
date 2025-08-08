@@ -3,15 +3,16 @@ import requests
 from flask import Flask, request, jsonify
 import subprocess
 from datetime import datetime
+from typing import List, Dict, Any
 
 app = Flask(__name__)
 
 
-def get_from_deltas(top_left: str, bottom_right: str):
+def get_from_deltas(top_left: str, bottom_right: str) -> List[Dict[str, Any]]:
     """
     Récupère les données des services delta et les fusionne.
     """
-    merged_elements = []
+    merged_elements: List[Dict[str, Any]] = []
 
     # Exécute la commande pour obtenir les adresses IP des services delta
     cmd_string = "kubectl exec dnsutils -- nslookup delta-service.update.svc.cluster.local | grep Address:"
@@ -22,19 +23,19 @@ def get_from_deltas(top_left: str, bottom_right: str):
         e = e.strip()
         url = f"http://{e}:3000/geolocdpe/api/v0/dpe/get?topLeft={top_left}&bottomRight={bottom_right}"
         data = fetch(url)
-        json_response = json.loads(data)
+        json_response: List[Dict[str, Any]] = json.loads(data)
 
         if not merged_elements:
             merged_elements.extend(json_response)
         else:
             for rep in json_response:
                 is_modified = False
-                for mer in merged_elements:
+                for i, mer in enumerate(merged_elements):
                     if (
                         mer["dpe_id"] == rep["dpe_id"]
                         and parse_time(rep["date_derniere_modification_dpe"]) > parse_time(mer["date_derniere_modification_dpe"])
                     ):
-                        mer.update(rep)
+                        merged_elements[i] = rep
                         is_modified = True
                         break
                 if not is_modified:
@@ -43,7 +44,7 @@ def get_from_deltas(top_left: str, bottom_right: str):
     return merged_elements
 
 
-def fetch(url: str):
+def fetch(url: str) -> bytes:
     """
     Effectue une requête HTTP GET et retourne les données.
     """
@@ -56,7 +57,7 @@ def fetch(url: str):
         return b""
 
 
-def parse_time(date_str: str):
+def parse_time(date_str: str) -> datetime:
     """
     Parse une chaîne de date au format yyyy-mm-dd en objet datetime.
     """

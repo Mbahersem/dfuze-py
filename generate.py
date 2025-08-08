@@ -108,7 +108,9 @@ def generate_sql_dump(results: List[DPEResume], tuesday: datetime.date) -> str:
             );
             """
             if element.ban_x == 0 or element.ban_y == 0 or not element.identifiant_dpe:
-                sql += f"INSERT INTO dpe_defaillant (dpe_id) VALUES ('{element.dpe_id.replace("'", "")}');\n"
+                sql += f"""
+                INSERT INTO dpe_defaillant (dpe_id) VALUES ('{element.dpe_id.replace("'", "")}');\n
+                """
             file.write(sql)
 
     return file_name

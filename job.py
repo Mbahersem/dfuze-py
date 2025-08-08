@@ -1,10 +1,8 @@
 import requests
-import json
 import datetime
 import subprocess
-import netifaces
+import socket
 from typing import List, Dict, Any
-
 
 FIRST_URL = (
     "https://data.ademe.fr/data-fair/api/v1/datasets/dpe03existant/lines?"
@@ -62,6 +60,13 @@ class DPEResume:
         self.enum_typologie_logement_id = data.get("typologie_logement", "")
 
 
+class JSONResponse:
+    def __init__(self, data: Dict[str, Any]):
+        self.total = data.get("total", 0)
+        self.next = data.get("next", "")
+        self.results = [DPEResume(result) for result in data.get("results", [])]
+
+
 def get_elements_from_api(url: str) -> bytes:
     try:
         response = requests.get(url)
@@ -97,13 +102,11 @@ def handle_cmd_outputs(cmd: List[str]):
 
 def get_ip() -> str:
     try:
-        for iface in netifaces.interfaces():
-            addrs = netifaces.ifaddresses(iface)
-            if netifaces.AF_INET in addrs:
-                for addr in addrs[netifaces.AF_INET]:
-                    ip = addr.get("addr")
-                    if ip and not ip.startswith("127.") and not ip.startswith("169.254"):
-                        return ip
+        # Create a temporary socket to determine the local IP address
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            # Connect the socket to an external address (Google DNS)
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
     except Exception as e:
         print(f"Error getting IP address: {e}")
-    return ""
+        return ""
