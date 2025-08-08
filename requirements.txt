@@ -1,6 +1,2 @@
 requests
-sqlalchemy
-python-dotenv
-
 Flask==2.3.2          # Pour le serveur HTTP dans agregator
-netifaces==0.11.0     # Pour récupérer les adresses IP dans apply 
