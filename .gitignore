@@ -1,2 +1,6 @@
 /dpe-env
 /__pycache__
+dpe_dump*.sql
+dpe_dump*.json
+dpe_dump*.yaml
+Dockerfile
