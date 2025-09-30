@@ -2,7 +2,13 @@
 Version Python de `dfuze`.
 
 ## Avant de commencer
-Il est préférable d'avoir un cluster Kubernetes configuré avec un registre privé et Docker installé. Par la suite, il nous faut créer un environnement virtuel via :
+Il est préférable d'avoir un cluster Kubernetes configuré avec un registre privé et Docker installé. Dans ce cluster, on effectuera la commande :
+```bash
+kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+```
+
+
+Par la suite, il nous faut créer un environnement virtuel via :
 ```bash
 python3 -m venv dpe-env
 ```
